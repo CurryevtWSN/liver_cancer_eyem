@@ -45,7 +45,7 @@ for name in ['CEA','CA125','ALP']:
     x_train = X_0[y_train.index, :]
     x_test = X_0[y_test.index, :]
 
-    rfc = RandomForestRegressor(n_estimators=100)
+    rfc = RandomForestRegressor(n_estimators=100,random_state = random_state_new)
     rfc = rfc.fit(x_train, y_train)
     y_predict = rfc.predict(x_test)
 
