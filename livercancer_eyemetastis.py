@@ -28,7 +28,7 @@ st.sidebar.markdown('##### For communication and cooperation, please contact wsh
 map = {'≤400':0,'>400':1}
 AFP_400 =map[AFP_400]
 # 数据读取，特征标注
-hp_train = pd.read_csv('E:\\Spyder_2022.3.29\\output\\machinel\\sy_output\\liver_cacer_em\\github_data.csv')
+hp_train = pd.read_csv('github_data.csv')
 hp_train['M'] = hp_train['M'].apply(lambda x : +1 if x==1 else 0)
 features =["AFP_400","CEA","CA125","CA199",'ALP','TG']
 target = 'M'
