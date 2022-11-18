@@ -45,7 +45,7 @@ sp = 0.5
 #figure
 is_t = (XGB_model.predict_proba(np.array([[AFP_400,CEA,CA125,CA199,ALP,TG]]))[0][1])> sp
 prob = (XGB_model.predict_proba(np.array([[AFP_400,CEA,CA125,CA199,ALP,TG]]))[0][1])*1000//1/10
-prob
+
 
 if is_t:
     result = 'High Risk Ocular metastasis'
