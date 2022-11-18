@@ -7,6 +7,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 #应用标题
 st.set_page_config(page_title='Prediction model for Ocular metastasis of hepatocellular carcinoma')
@@ -39,7 +40,8 @@ X_ros = np.array(X_data)
 y_ros = np.array(hp_train[target])
 oversample = SMOTE(random_state = random_state_new)
 X_ros, y_ros = oversample.fit_resample(X_ros, y_ros)
-XGB_model = XGBClassifier(n_estimators=360, max_depth=2, learning_rate=0.1,random_state = random_state_new)
+#XGB_model = XGBClassifier(n_estimators=360, max_depth=2, learning_rate=0.1,random_state = random_state_new)
+XGB_model = LogisticRegression(penalty="none", random_state=random_state_new)
 XGB_model.fit(X_ros, y_ros)
 sp = 0.5
 #figure
