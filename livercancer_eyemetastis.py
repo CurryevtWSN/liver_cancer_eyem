@@ -35,10 +35,10 @@ map = {'≤400':0,'>400':1}
 AFP_400 =map[AFP_400]
 # 数据读取，特征标注
 #%%load model
-xgb_model = joblib.load(r'E:\Spyder_2022.3.29\output\machinel\wsn_output\gbm_model_liver_eye.pkl')
+xgb_model = joblib.load('gbm_model_liver_eye.pkl')
 
 #%%load data
-hp_train = pd.read_csv('E:\\Spyder_2022.3.29\\output\\machinel\\sy_output\\liver_cacer_em\\github_data.csv')
+hp_train = pd.read_csv('github_data.csv')
 features =["AFP_400","CEA","CA125","CA199",'ALP','TG']
 target = 'M'
 y = np.array(hp_train[target])
