@@ -1,21 +1,22 @@
-import streamlit as st
+#%%load package
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sklearn
-# from sklearn.neural_network import MLPClassifier
-# from sklearn.impute import SimpleImputer
-from imblearn.over_sampling import SMOTE
-# from sklearn.ensemble import RandomForestRegressor
-# from xgboost import XGBClassifier
+import streamlit as st
 import seaborn as sns
 import shap
+import sklearn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-#应用标题
+import joblib
+
 #%%不提示warning信息
 st.set_option('deprecation.showPyplotGlobalUse', False)
+
+#%%set title
 st.set_page_config(page_title='Prediction model for Ocular metastasis of hepatocellular carcinoma')
 st.title('Ocular metastasis from primary liver cancer: Machine Learning-Based development and interpretation study')
+
+#%%set variables selection
 st.sidebar.markdown('## Variables')
 AFP_400 = st.sidebar.selectbox('AFP_400(μg/L)',('≤400','>400'),index=1)
 CEA = st.sidebar.slider("CEA(μg/L)", 0.00, 120.00, value=7.68, step=0.01)
@@ -34,14 +35,15 @@ map = {'≤400':0,'>400':1}
 AFP_400 =map[AFP_400]
 # 数据读取，特征标注
 #%%load model
-import joblib
-xgb_model = joblib.load('gbm_model_liver_eye.pkl')
-hp_train = pd.read_csv('github_data.csv')
+xgb_model = joblib.load(r'E:\Spyder_2022.3.29\output\machinel\wsn_output\gbm_model_liver_eye.pkl')
+
+#%%load data
+hp_train = pd.read_csv('E:\\Spyder_2022.3.29\\output\\machinel\\sy_output\\liver_cacer_em\\github_data.csv')
 features =["AFP_400","CEA","CA125","CA199",'ALP','TG']
 target = 'M'
 y = np.array(hp_train[target])
 sp = 0.5
-#figure
+
 is_t = (xgb_model.predict_proba(np.array([[AFP_400,CEA,CA125,CA199,ALP,TG]]))[0][1])> sp
 prob = (xgb_model.predict_proba(np.array([[AFP_400,CEA,CA125,CA199,ALP,TG]]))[0][1])*1000//1/10
 
@@ -55,8 +57,7 @@ if st.button('Predict'):
     if result == '  Low Risk Ocular metastasis':
         st.balloons()
     st.markdown('## Probability of High Risk Ocular metastasis group:  '+str(prob)+'%')
-
-    #%%SHAP
+    #%%cbind users data
     col_names = features
     X_last = pd.DataFrame(np.array([[AFP_400,CEA,CA125,CA199,ALP,TG]]))
     X_last.columns = col_names
@@ -70,10 +71,8 @@ if st.button('Predict'):
     y_raw = (np.array(hp_train[target]))
     y = np.append(y_raw,y_last)
     y = pd.DataFrame(y)
-        
-    
     model = xgb_model
-    #%%
+    #%%calculate shap values
     sns.set()
     explainer = shap.Explainer(model, X)
     shap_values = explainer.shap_values(X)
@@ -90,13 +89,13 @@ if st.button('Predict'):
     #                 out_names = "Output value")
     # st.pyplot(force_plot)
     #%%SHAP Water PLOT
-    st.subheader('SHAP Water plot')
+    st.subheader('SHAP Water plot of XGB model')
     shap_values = explainer(X) # 传入特征矩阵X，计算SHAP值
     fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
     waterfall_plot = shap.plots.waterfall(shap_values[a,:])
     st.pyplot(waterfall_plot)
-    #%%ConfusionMatrix
-    st.subheader('Confusion Matrix of XGB')
+    #%%ConfusionMatrix 
+    st.subheader('Confusion Matrix of XGB model')
     xgb_prob = xgb_model.predict(X)
     cm = confusion_matrix(y, xgb_prob)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['NOM', 'OM'])
